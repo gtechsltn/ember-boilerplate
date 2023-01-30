@@ -1,0 +1,13 @@
+.env*
+.git
+node_modules
+build
+dist
+docs
+tmp
+tests
+.*
+Dockerfile
+docker-compose.yml
+Makefile
+README.md

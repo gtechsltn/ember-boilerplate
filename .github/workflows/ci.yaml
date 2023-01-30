@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    env:
+      JOBS: 1 # See https://git.io/vdao3 for details
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16.16
+
+      - uses: actions/cache@v2
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles(format('{0}/package-lock.json', github.workspace)) }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: make ci-dependencies
+      - run: make lint
+      - run: make check
+      - run: make test
+      - run: make check-code-coverage # Running coverage depends on the running the tests first
+      - run: make build-app
